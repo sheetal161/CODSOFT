@@ -1,107 +1,105 @@
-import tkinter as tk
-from tkinter import ttk, messagebox
-from ttkbootstrap import Style
-import json
+from tkinter import *
+from unittest import result
 
-class TodoListApp(tk.Tk):
-    def __init__(self):
-        super().__init__()
 
-        self.title("Todo List App")
-        self.geometry("400x400")
-        style = Style(theme="flatly")
-        style.configure("Custon.TEntry", foreground="gray")
+def buttonClick(number):
+    global operator
+    operator = operator + str(number)
+    input_value.set(operator)
 
-        # Create input field for adding tasks
-        self.task_input = ttk.Entry(self, font=(
-            "TkDefaultFont", 16), width=30, style="Custon.TEntry")
-        self.task_input.pack(pady=10)
 
-        # Set placeholder for input field
-        self.task_input.insert(0, "Enter your todo here...")
+def buttonClear():
+    global operator
+    operator = ""
+    input_value.set("")
 
-        # Bind event to clear placeholder when input field is clicked
-        self.task_input.bind("<FocusIn>", self.clear_placeholder)
-        # Bind event to restore placeholder when input field loses focus
-        self.task_input.bind("<FocusOut>", self.restore_placeholder)
 
-        # Create button for adding tasks
-        ttk.Button(self, text="Add", command=self.add_task).pack(pady=5)
+def buttonEqual():
+    global operator
+    result = str(eval(operator))
+    input_value.set(result)
+    operator = ""
 
-        # Create listbox to display added tasks
-        self.task_list = tk.Listbox(self, font=(
-            "TkDefaultFont", 16), height=2, selectmode=tk.NONE)
-        self.task_list.pack(fill=tk.BOTH, expand=True, padx=5, pady=5)
 
-        # Create buttons for marking tasks as done or deleting them
-        ttk.Button(self, text="Done", style="success.TButton",
-                   command=self.mark_done).pack(side=tk.LEFT, padx=10, pady=5)
-        ttk.Button(self, text="Discard", style="danger.TButton",
-                   command=self.delete_task).pack(side=tk.RIGHT, padx=10, pady=5)
-        
-        # Create buttton for displaying task statistics
-        ttk.Button(self, text="Stats", style="info.TButton",
-                   command=self.view_stats).pack(side=tk.BOTTOM, pady=20)
-        
-        self.load_tasks()
-    
-    def view_stats(self):
-        done_count = 0
-        total_count = self.task_list.size()
-        for i in range(total_count):
-            if self.task_list.itemcget(i, "fg") == "green":
-                done_count += 1
-        messagebox.showinfo("Task Statistics", f"Total tasks: {total_count}\nCompleted tasks: {done_count}")
+main = Tk()
+main.title("Calculator")
 
-    def add_task(self):
-        task = self.task_input.get()
-        if task != "Enter your todo here...":
-            self.task_list.insert(tk.END, task)
-            self.task_list.itemconfig(tk.END, fg="dark blue")
-            self.task_input.delete(0, tk.END)
-            self.save_tasks()
+operator = ""
+input_value = StringVar()
+display_text = Entry(main, font=("arial", 20, "bold"), textvariable=input_value, bd=30, insertwidth=4,
+                     bg="powder blue", justify=RIGHT)
+display_text.grid(columnspan=4)
 
-    def mark_done(self):
-        task_index = self.task_list.curselection()
-        if task_index:
-            self.task_list.itemconfig(task_index, fg="green")
-            self.save_tasks()
-    
-    def delete_task(self):
-        task_index = self.task_list.curselection()
-        if task_index:
-            self.task_list.delete(task_index)
-            self.save_tasks()
-    
-    def clear_placeholder(self, event):
-        if self.task_input.get() == "Enter your todo here...":
-            self.task_input.delete(0, tk.END)
-            self.task_input.configure(style="TEntry")
+# Row 1 7 8 9 +
 
-    def restore_placeholder(self, event):
-        if self.task_input.get() == "":
-            self.task_input.insert(0, "Enter your todo here...")
-            self.task_input.configure(style="Custom.TEntry")
+btn_7 = Button(main, padx=16, bd=8, fg="black",
+               font=("arial", 20, "bold"), text="7", command=lambda: buttonClick(7))
+btn_7.grid(row=1, column=0)
 
-    def load_tasks(self):
-        try:
-            with open("tasks.json", "r") as f:
-                data = json.load(f)
-                for task in data:
-                    self.task_list.insert(tk.END, task["text"])
-                    self.task_list.itemconfig(tk.END, fg=task["color"])
-        except FileNotFoundError:
-            pass
-    
-    def save_tasks(self):
-        data = []
-        for i in range(self.task_list.size()):
-            text = self.task_list.get(i)
-            color = self.task_list.itemcget(i, "fg")
-            data.append({"text": text, "color": color})
-        with open("tasks.json", "w") as f:
-            json.dump(data, f)
+btn_8 = Button(main, padx=16, bd=8, fg="black",
+               font=("arial", 20, "bold"), text="8", command=lambda: buttonClick(8))
+btn_8.grid(row=1, column=1)
 
-if __name__ == '__main__':
-    app = TodoListApp()
-    app.mainloop()
+btn_9 = Button(main, padx=16, bd=8, fg="black",
+               font=("arial", 20, "bold"), text="9", command=lambda: buttonClick(9))
+btn_9.grid(row=1, column=2)
+
+btn_add = Button(main, padx=16, bd=8, fg="black",
+                 font=("arial", 20, "bold"), text="+", command=lambda: buttonClick("+"))
+btn_add.grid(row=1, column=3)
+
+# Row 2 - 4 5 6 -
+
+btn_4 = Button(main, padx=16, bd=8, fg="black",
+               font=("arial", 20, "bold"), text="4", command=lambda: buttonClick(4))
+btn_4.grid(row=2, column=0)
+
+btn_5 = Button(main, padx=16, bd=8, fg="black",
+               font=("arial", 20, "bold"), text="5", command=lambda: buttonClick(5))
+btn_5.grid(row=2, column=1)
+
+btn_6 = Button(main, padx=16, bd=8, fg="black",
+               font=("arial", 20, "bold"), text="6", command=lambda: buttonClick(6))
+btn_6.grid(row=2, column=2)
+
+btn_sub = Button(main, padx=16, bd=8, fg="black",
+                 font=("arial", 20, "bold"), text="-", command=lambda: buttonClick("-"))
+btn_sub.grid(row=2, column=3)
+
+# Row 3 - 1 2 3 *
+
+btn_1 = Button(main, padx=16, bd=8, fg="black",
+               font=("arial", 20, "bold"), text="4", command=lambda: buttonClick(1))
+btn_1.grid(row=3, column=0)
+
+btn_2 = Button(main, padx=16, bd=8, fg="black",
+               font=("arial", 20, "bold"), text="5", command=lambda: buttonClick(2))
+btn_2.grid(row=3, column=1)
+
+btn_3 = Button(main, padx=16, bd=8, fg="black",
+               font=("arial", 20, "bold"), text="6", command=lambda: buttonClick(3))
+btn_3.grid(row=3, column=2)
+
+btn_mul = Button(main, padx=16, bd=8, fg="black",
+                 font=("arial", 20, "bold"), text="*", command=lambda: buttonClick("*"))
+btn_mul.grid(row=3, column=3)
+
+# Row 4 - 0 C = /
+
+btn_0 = Button(main, padx=16, bd=8, fg="black",
+               font=("arial", 20, "bold"), text="0", command=lambda: buttonClick(0))
+btn_0.grid(row=4, column=0)
+
+btn_clear = Button(main, padx=16, bd=8, fg="black",
+                   font=("arial", 20, "bold"), text="C", command=buttonClear)
+btn_clear.grid(row=4, column=1)
+
+btn_equal = Button(main, padx=16, bd=8, fg="black",
+                   font=("arial", 20, "bold"), text="=", command=buttonEqual)
+btn_equal.grid(row=4, column=2)
+
+btn_div = Button(main, padx=16, bd=8, fg="black",
+                 font=("arial", 20, "bold"), text="/", command=lambda: buttonClick("/"))
+btn_div.grid(row=4, column=3)
+
+main.mainloop()
